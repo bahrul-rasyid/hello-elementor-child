@@ -1,4 +1,9 @@
 {
+  "phpcs.enable": true,
   "phpcs.executablePath": "../../../../vendor/bin/phpcs",
-  "phpcs.ignorePatterns": []
+  "phpcs.standard": "WordPress-Core",
+  "phpcbf.standard": "WordPress-Core",
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
