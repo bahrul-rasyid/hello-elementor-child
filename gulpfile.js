@@ -23,6 +23,29 @@ const paths = {
   },
 };
 
+// BrowserSync task
+function browserSyncServe(done) {
+  browserSync.init({
+    proxy: 'localhost', // Use dedicated port for development
+    port: 3000,
+    open: false,
+    notify: false,
+    ghostMode: {
+      clicks: true,
+      scroll: true,
+      forms: true,
+    },
+  });
+
+  done();
+}
+
+// BrowserSync reload
+function browserSyncReload(done) {
+  browserSync.reload();
+  done();
+}
+
 // SCSS compilation task (development - no autoprefixer)
 function compileSCSS() {
   return gulp
@@ -35,7 +58,8 @@ function compileSCSS() {
       }).on('error', sass.logError)
     )
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(paths.scss.dest));
+    .pipe(gulp.dest(paths.scss.dest))
+    .pipe(browserSync.stream());
 }
 
 // SCSS compilation task (production - with autoprefixer, no source maps)
@@ -83,7 +107,8 @@ function compileJS() {
         },
       })
     )
-    .pipe(gulp.dest(paths.js.dest));
+    .pipe(gulp.dest(paths.js.dest))
+    .pipe(browserSync.stream());
 }
 
 // TypeScript/JavaScript compilation task (production - minified, no source maps)
@@ -113,21 +138,6 @@ function buildJS() {
     .pipe(gulp.dest(paths.js.dest));
 }
 
-// BrowserSync task
-function serve() {
-  browserSync.init({
-    proxy: 'localhost:8080', // Use dedicated port for development
-    port: 3000,
-    open: false,
-    notify: false,
-    ghostMode: {
-      clicks: true,
-      scroll: true,
-      forms: true,
-    },
-  });
-}
-
 // Alternative BrowserSync task for static files (if not using proxy)
 function serveStatic() {
   browserSync.init({
@@ -142,9 +152,9 @@ function serveStatic() {
 
 // Watch task
 function watchFiles() {
-  gulp.watch(paths.scss.src, gulp.series(compileSCSS, browserSync.reload));
-  gulp.watch('src/ts/**/*.{ts,js}', gulp.series(compileJS, browserSync.reload)); // Watch all TS files but compile main.ts
-  gulp.watch('**/*.php', browserSync.reload); // Watch PHP files for changes
+  gulp.watch(paths.scss.src, compileSCSS);
+  gulp.watch('src/ts/**/*.{ts,js}', compileJS); // Watch all TS files but compile main.ts
+  gulp.watch('**/*.php', browserSyncReload); // Watch PHP files for changes
 }
 
 // Create deployment zip
@@ -159,16 +169,11 @@ function createZip() {
 // Public tasks
 exports.scss = compileSCSS;
 exports.js = compileJS;
-exports.serve = gulp.series(
-  gulp.parallel(compileSCSS, compileJS),
-  serve,
-  watchFiles
-);
 exports.watch = gulp.series(gulp.parallel(compileSCSS, compileJS), watchFiles);
 exports.build = gulp.parallel(buildSCSS, buildJS);
 exports.dev = gulp.series(
+  browserSyncServe,
   gulp.parallel(compileSCSS, compileJS),
-  serve,
   watchFiles
 );
 
@@ -176,7 +181,7 @@ exports.dev = gulp.series(
 exports.deploy = gulp.series(gulp.parallel(buildSCSS, buildJS), createZip);
 
 exports.default = gulp.series(
+  browserSyncServe,
   gulp.parallel(compileSCSS, compileJS),
-  serve,
   watchFiles
 );
