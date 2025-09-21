@@ -171,7 +171,6 @@ exports.dev = gulp.series(
   serve,
   watchFiles
 );
-exports.clean = cleanDist;
 
 // Deployment task
 exports.deploy = gulp.series(gulp.parallel(buildSCSS, buildJS), createZip);
