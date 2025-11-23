@@ -161,7 +161,7 @@ function watchFiles() {
 function createZip() {
   const zipName = `${pkg.name}-${pkg.version}.zip`;
   return gulp
-    .src(['*.php', 'style.css', 'assets/**'])
+    .src(['*.php', 'style.css', 'assets/**'], { base: "../" })
     .pipe(zip(zipName))
     .pipe(gulp.dest('./build'));
 }
