@@ -1,4 +1,1 @@
-# Hello Elementor Child Theme
-
-related to:
-https://github.com/bahrul-rasyid/wp-dev-docker
+# Hello Elementor Child Theme for Estatetool Demo

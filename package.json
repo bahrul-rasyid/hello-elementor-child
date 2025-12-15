@@ -1,6 +1,6 @@
 {
   "name": "hello-elementor-child",
-  "version": "1.0.0",
+  "version": "1.0.0-beta1",
   "description": "A child theme for Hello Elementor with custom features and styles.",
   "scripts": {
     "build": "gulp build",
